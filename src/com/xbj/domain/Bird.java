@@ -5,6 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 @Data
 public class Bird implements Serializable {
+    // 实体类
     private Integer birdId;
     private String birdName;
     private String password;
@@ -12,5 +13,6 @@ public class Bird implements Serializable {
     private String hobbies;
     private String address;
     private String email;
+    
 
 }
