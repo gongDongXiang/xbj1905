@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+namespace:mapper对应的接口的全限定名
+-->
+<mapper namespace="com.xbj.mapper.BirdMapper">
+    <!--
+    id:对应的是接口中的方法名
+    resultType：指明方法的返回值类型，如果是集合指明泛型类型即可
+    parameterType:指明参数类型
+    resultMap：返回值手动映射的resultMap的id
+    -->
+    <!--  这里面的sql语句写法和你的sql编辑工具写法一毛一样
+      不用写分号-->
+    <!--
+    如果参数是四类八种及其包装类或者是String类型，
+    我们只能使用${value}进行取值，写其他的报错
+    也可以使用#进行取值，如果使用的是#大括号里面的内容随便写，都可以取
+    出
+    #和$的区别：
+        $取出来是什么就是什么，不会进行任何多余的操作
+            $可以帮我们自动把null替换成空字符串
+        #就相当于PS,是先使用占位符站位，然后再调用set方法，
+        将对应的参数设置进去。可以防止sql注入
+    -->
+
+    <!--&lt;!&ndash;手动指明映射关系&ndash;&gt;
+    <resultMap id="monkey" type="Monkey">
+        &lt;!&ndash;
+            如果数据库中命名是下划线，javabean中命名是驼峰，mybatis默认没有开启自动
+            映射的情况下，需要我们手动指明映射关系。
+            id：映射主键，无论是否一致必须写
+            result：映射普通字段，可以只写不一样的，也就是需要映射的
+            property：bean中的属性名
+            column：数据库中的字段名
+            javaType：属性的java类型（通常省略）
+            jdbcType:字段的数据库中的类型（通常省略）
+        <result property="userEmail" column="user_email"
+        javaType="java.lang.String" jdbcType="VARCHAR"></result>
+        &ndash;&gt;
+        <id property="monkeyId" column="monkeyId" ></id>
+        <result property="monkeyName" column="monkey_name" ></result>
+        <result property="monkeyId" column="monkey_id" ></result>
+    </resultMap>-->
+
+    <sql id="select">
+        select * from bird where
+    </sql>
+    <insert id="insertBird"  >
+      <selectKey keyProperty="bird.birdId" order="AFTER" resultType="int" keyColumn="bird_id">
+          SELECT LAST_INSERT_ID()
+      </selectKey>
+
+
+        insert into bird values (null,#{bird.birdName},#{bird.password},#{bird.gender},#{bird.hobbies},#{bird.address},#{bird.email},'0')
+    </insert>
+
+    <update id="updateBird">
+         UPDATE bird SET bird_name = #{bird.birdName},password = #{bird.password},gender = #{bird.gender},hobbies = #{bird.hobbies},address = #{bird.address},email = #{bird.email}
+        where bird_id = #{bird.birdId}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE bird set bird_status = '1' WHERE bird_id = #{id}
+    </update>
+
+
+
+    <select id="countBird" resultType="java.lang.Integer">
+
+        SELECT count(*) from bird WHERE
+         bird_name like "%${bird.birdName}%" and hobbies like "%${bird.hobbies}%"
+         and email like "%${bird.email}%" and bird_status = '0'
+    </select>
+
+
+    <select id="listAll" resultType="com.xbj.domain.Bird">
+        select * from bird where
+        bird_name like "%${bird.birdName}%" and hobbies like "%${bird.hobbies}%"
+        and email like "%${bird.email}%" and bird_status = '0'
+        order by bird_id desc limit #{param1},#{param2}
+
+    </select>
+
+    <select id="login" resultType="com.xbj.domain.Bird">
+        SELECT * FROM bird where bird_name = #{name} and password = #{password} and bird_status = '0'
+    </select>
+
+    <select id="findById" resultType="com.xbj.domain.Bird">
+        SELECT * from bird where bird_id = #{id}
+    </select>
+
+    <select id="ajaxCheckName" resultType="java.lang.Integer">
+        select count(*) from bird WHERE bird_name = #{name}
+    </select>
+</mapper>
